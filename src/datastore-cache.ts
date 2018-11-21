@@ -17,33 +17,33 @@
  * the License.
  */
 
-'use strict';
+"use strict";
 
-import * as Datastore from '@google-cloud/datastore';
-import {DatastoreKey} from '@google-cloud/datastore/entity';
-import * as Koa from 'koa';
-
+import Datastore from "@google-cloud/datastore";
+import { DatastoreKey } from "@google-cloud/datastore/entity";
+import Koa from "koa";
 
 type CacheContent = {
-  saved: Date,
-  expires: Date,
-  headers: string,
-  payload: string,
+  saved: Date;
+  expires: Date;
+  headers: string;
+  payload: string;
 };
 
 type DatastoreObject = {
-  [Datastore.KEY]: DatastoreKey
+  [Datastore.KEY]: DatastoreKey;
 };
 
 export class DatastoreCache {
-  datastore: Datastore = new(Datastore as any)();
+  datastore: Datastore = new (Datastore as any)();
 
   async clearCache() {
-    const query = this.datastore.createQuery('Page');
+    const query = this.datastore.createQuery("Page");
     const data = await query.run();
     const entities = data[0];
     const entityKeys = entities.map(
-        (entity) => (entity as DatastoreObject)[this.datastore.KEY]);
+      entity => (entity as DatastoreObject)[this.datastore.KEY]
+    );
     console.log(`Removing ${entities.length} items from the cache`);
     await this.datastore.delete(entityKeys);
     // TODO(samli): check info (data[1]) and loop through pages of entities to
@@ -56,21 +56,21 @@ export class DatastoreCache {
     const entity = {
       key: key,
       data: [
-        {name: 'saved', value: now},
+        { name: "saved", value: now },
         {
-          name: 'expires',
+          name: "expires",
           value: new Date(now.getTime() + cacheDurationMinutes * 60 * 1000)
         },
         {
-          name: 'headers',
+          name: "headers",
           value: JSON.stringify(headers),
           excludeFromIndexes: true
         },
         {
-          name: 'payload',
+          name: "payload",
           value: JSON.stringify(payload),
           excludeFromIndexes: true
-        },
+        }
       ]
     };
     await this.datastore.save(entity);
@@ -83,12 +83,13 @@ export class DatastoreCache {
     const cacheContent = this.cacheContent.bind(this);
 
     return async function(
-               this: DatastoreCache,
-               ctx: Koa.Context,
-               next: () => Promise<any>) {
+      this: DatastoreCache,
+      ctx: Koa.Context,
+      next: () => Promise<any>
+    ) {
       // Cache based on full URL. This means requests with different params are
       // cached separately.
-      const key = this.datastore.key(['Page', ctx.url]);
+      const key = this.datastore.key(["Page", ctx.url]);
       const results = await this.datastore.get(key);
 
       if (results.length && results[0] != undefined) {
@@ -97,18 +98,22 @@ export class DatastoreCache {
         if (content.expires.getTime() >= new Date().getTime()) {
           const headers = JSON.parse(content.headers);
           ctx.set(headers);
-          ctx.set('x-rendertron-cached', content.saved.toUTCString());
+          ctx.set("x-rendertron-cached", content.saved.toUTCString());
           try {
             let payload = JSON.parse(content.payload);
-            if (payload && typeof (payload) == 'object' &&
-                payload.type == 'Buffer') {
+            if (
+              payload &&
+              typeof payload == "object" &&
+              payload.type == "Buffer"
+            ) {
               payload = new Buffer(payload);
             }
             ctx.body = payload;
             return;
           } catch (error) {
             console.log(
-                'Erroring parsing cache contents, falling back to normal render');
+              "Erroring parsing cache contents, falling back to normal render"
+            );
           }
         }
       }
