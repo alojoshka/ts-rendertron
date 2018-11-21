@@ -14,30 +14,30 @@
  * the License.
  */
 
-'use strict';
+"use strict";
 
-const request = require('request');
+const request = require("request");
 
 /**
  * A default set of user agent patterns for bots/crawlers that do not perform
  * well with pages that require JavaScript.
  */
-const botUserAgents = module.exports.botUserAgents = [
-  'W3C_Validator',
-  'baiduspider',
-  'bingbot',
-  'embedly',
-  'facebookexternalhit',
-  'linkedinbot',
-  'outbrain',
-  'pinterest',
-  'quora link preview',
-  'rogerbot',
-  'showyoubot',
-  'slackbot',
-  'twitterbot',
-  'vkShare',
-];
+const botUserAgents = (module.exports.botUserAgents = [
+  "W3C_Validator",
+  "baiduspider",
+  "bingbot",
+  "embedly",
+  "facebookexternalhit",
+  "linkedinbot",
+  "outbrain",
+  "pinterest",
+  "quora link preview",
+  "rogerbot",
+  "showyoubot",
+  "slackbot",
+  "twitterbot",
+  "vkShare"
+]);
 
 /* eslint-disable no-multi-spaces */
 
@@ -46,11 +46,47 @@ const botUserAgents = module.exports.botUserAgents = [
  * proxied.
  */
 const staticFileExtensions = [
-  'ai',  'avi',  'css', 'dat',  'dmg', 'doc',     'doc',  'exe', 'flv',
-  'gif', 'ico',  'iso', 'jpeg', 'jpg', 'js',      'less', 'm4a', 'm4v',
-  'mov', 'mp3',  'mp4', 'mpeg', 'mpg', 'pdf',     'png',  'ppt', 'psd',
-  'rar', 'rss',  'svg', 'swf',  'tif', 'torrent', 'ttf',  'txt', 'wav',
-  'wmv', 'woff', 'xls', 'xml',  'zip',
+  "ai",
+  "avi",
+  "css",
+  "dat",
+  "dmg",
+  "doc",
+  "doc",
+  "exe",
+  "flv",
+  "gif",
+  "ico",
+  "iso",
+  "jpeg",
+  "jpg",
+  "js",
+  "less",
+  "m4a",
+  "m4v",
+  "mov",
+  "mp3",
+  "mp4",
+  "mpeg",
+  "mpg",
+  "pdf",
+  "png",
+  "ppt",
+  "psd",
+  "rar",
+  "rss",
+  "svg",
+  "swf",
+  "tif",
+  "torrent",
+  "ttf",
+  "txt",
+  "wav",
+  "wmv",
+  "woff",
+  "xls",
+  "xml",
+  "zip"
 ];
 
 /* eslint-enable no-multi-spaces */
@@ -71,37 +107,41 @@ const staticFileExtensions = [
  */
 module.exports.makeMiddleware = function(options) {
   if (!options || !options.proxyUrl) {
-    throw new Error('Must set options.proxyUrl.');
+    throw new Error("Must set options.proxyUrl.");
   }
   let proxyUrl = options.proxyUrl;
-  if (!proxyUrl.endsWith('/')) {
-    proxyUrl += '/';
+  if (!proxyUrl.endsWith("/")) {
+    proxyUrl += "/";
   }
   const userAgentPattern =
-      options.userAgentPattern || new RegExp(botUserAgents.join('|'), 'i');
-  const excludeUrlPattern = options.excludeUrlPattern ||
-      new RegExp(`\\.(${staticFileExtensions.join('|')})$`, 'i');
+    options.userAgentPattern || new RegExp(botUserAgents.join("|"), "i");
+  const excludeUrlPattern =
+    options.excludeUrlPattern ||
+    new RegExp(`\\.(${staticFileExtensions.join("|")})$`, "i");
   const injectShadyDom = !!options.injectShadyDom;
   // The Rendertron service itself has a hard limit of 10 seconds to render, so
   // let's give a little more time than that by default.
-  const timeout = options.timeout || 11000; // Milliseconds.
+  const timeout = options.timeout || 25000; // Milliseconds.
 
   return function rendertronMiddleware(req, res, next) {
-    if (!userAgentPattern.test(req.headers['user-agent']) ||
-        excludeUrlPattern.test(req.path)) {
+    if (
+      !userAgentPattern.test(req.headers["user-agent"]) ||
+      excludeUrlPattern.test(req.path)
+    ) {
       next();
       return;
     }
     const incomingUrl =
-        req.protocol + '://' + req.get('host') + req.originalUrl;
+      req.protocol + "://" + req.get("host") + req.originalUrl;
     let renderUrl = proxyUrl + encodeURIComponent(incomingUrl);
     if (injectShadyDom) {
-      renderUrl += '?wc-inject-shadydom=true';
+      renderUrl += "?wc-inject-shadydom=true";
     }
-    request({url: renderUrl, timeout}, (e) => {
+    request({ url: renderUrl, timeout }, e => {
       if (e) {
         console.error(
-            `[rendertron middleware] ${e.code} error fetching ${renderUrl}`);
+          `[rendertron middleware] ${e.code} error fetching ${renderUrl}`
+        );
         next();
       }
     }).pipe(res);
