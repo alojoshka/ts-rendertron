@@ -84,7 +84,7 @@ export class Renderer {
     try {
       // Navigate to page. Wait until there are no oustanding network requests.
       response = await page.goto(
-          requestUrl, {timeout: 25000, waitUntil: 'networkidle0'});
+          requestUrl, {timeout: 32000, waitUntil: 'networkidle0'});
     } catch (e) {
       console.error(e);
     }
@@ -145,7 +145,7 @@ export class Renderer {
       page.setUserAgent(MOBILE_USERAGENT);
     }
 
-    await page.goto(url, {timeout: 25000, waitUntil: 'networkidle0'});
+    await page.goto(url, {timeout: 32000, waitUntil: 'networkidle0'});
 
     // Must be jpeg & binary format.
     const screenshotOptions =

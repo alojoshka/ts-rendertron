@@ -22,7 +22,7 @@ type Config = {
  */
 export class Rendertron {
   app: Koa = new Koa();
-  config: Config = {datastoreCache: true};
+  config: Config = {datastoreCache: false};
   private renderer: Renderer|undefined;
   private port = process.env.PORT || '3000';
 
