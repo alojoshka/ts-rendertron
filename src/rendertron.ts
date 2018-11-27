@@ -41,7 +41,7 @@ export class Rendertron {
         "--mute-audio",
         "--disable-dev-shm-usage",
         "--disable-accelerated-2d-canvas",
-        "--seamless"
+        "--headless"
       ]
     });
     this.renderer = new Renderer(browser);
