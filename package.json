@@ -4,10 +4,10 @@
   "description": "Renders webpages using headless Chrome for usage by bots",
   "license": "Apache-2.0",
   "repository": "https://github.com/GoogleChrome/rendertron",
+  "main": "src/main.js",
   "engines": {
     "node": "8.11.3"
   },
-  "main": "src/main.js",
   "bin": "bin/rendertron",
   "scripts": {
     "ts:watch": "tsc -w",
@@ -29,8 +29,8 @@
     "@google-cloud/datastore": "^1.4.1",
     "@types/fs-extra": "^5.0.4",
     "@webcomponents/webcomponentsjs": "^1.1.0",
-    "chrome-launcher": "^0.10.2",
-    "chrome-remote-interface": "^0.26.0",
+    "chrome-launcher": "^0.10.5",
+    "chrome-remote-interface": "^0.26.1",
     "fs-extra": "^7.0.0",
     "koa": "^2.5.2",
     "koa-bodyparser": "^4.2.1",
@@ -40,7 +40,7 @@
     "koa-static": "^5.0.0",
     "performance-now": "^2.1.0",
     "progress-bar-element": "^2.0.1",
-    "puppeteer": "^1.6.1",
+    "puppeteer": "^1.10.0",
     "semver": "^5.5.0",
     "uuid": "^3.2.1"
   },
