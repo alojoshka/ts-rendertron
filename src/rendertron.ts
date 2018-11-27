@@ -37,7 +37,11 @@ export class Rendertron {
         "--no-sandbox",
         "--disable-setuid-sandbox",
         "--disable-gpu",
-        "--remote-debugging-port=9222"
+        "--remote-debugging-port=9222",
+        "--mute-audio",
+        "--disable-dev-shm-usage",
+        "--disable-accelerated-2d-canvas",
+        "--seamless"
       ]
     });
     this.renderer = new Renderer(browser);
