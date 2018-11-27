@@ -6,7 +6,7 @@
   "repository": "https://github.com/GoogleChrome/rendertron",
   "main": "src/main.js",
   "engines": {
-    "node": ">=8.11.3"
+    "node": "8.11.3"
   },
   "bin": "bin/rendertron",
   "scripts": {
