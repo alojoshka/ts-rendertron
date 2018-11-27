@@ -51,7 +51,7 @@ export class DatastoreCache {
   }
 
   async cacheContent(key: DatastoreKey, headers: {}, payload: Buffer) {
-    const cacheDurationMinutes = 60 * 24;
+    const cacheDurationMinutes = 60;// * 24;
     const now = new Date();
     const entity = {
       key: key,
